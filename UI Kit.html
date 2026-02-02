@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component UI Kit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- UI Kit Base & Variables --- */
+        :root {
+            --font-sans: 'Inter', -apple-system, system-ui, "SF Pro Text", Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            --radius-lg: 8px;
+            --radius: 4px;
+            --shadow-md: 0 4px 12px rgb(0 0 0 / 0.1);
+            /* Palette from Figma UI Kit */
+            --bg: #262626;
+            --surface: #2C2C2C;
+            --border: #444444;
+            --muted: #454545;
+            --text: #fbfbfb;
+            --text-muted: #dedede;
+            --accent: #f7f7f7;
+            --ring: 0 0 0 1px #b5b5b5;
+            --ring-color: #b5b5b5;
+            /* Buttons from Figma UI Kit */
+            --btn-default-bg: #fbfbfb;
+            --btn-default-fg: #252525;
+            --btn-default-hover: #f7f7f7;
+            --btn-secondary-bg: #5f5f5f;
+            --btn-secondary-fg: #fbfbfb;
+            --btn-secondary-hover: #707070;
+            --editor-bg: #383838;
+        }
+
+        /* --- Base & Layout --- */
+        * { box-sizing: border-box; }
+        html { font-size: 16px; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+        .kit-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .kit-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .kit-description {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+        .component-section {
+            margin-bottom: 48px;
+        }
+        .component-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .component-preview {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .component-preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 0 0 8px 0;
+        }
+
+        /* --- Form Elements --- */
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .input { height: 34px; }
+        .input, .select, .select-btn {
+            width: 100%; border: none; background: var(--editor-bg); color: var(--text);
+            padding: 0 12px; border-radius: var(--radius); outline: none; transition: box-shadow .12s;
+            font-size: 14px; text-align: left;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { filter: invert(1); }
+        .input:focus-visible, .select:focus-visible, .select-btn:focus-visible, .btn:focus-visible, .switch-input:focus-visible + .switch-track { box-shadow: var(--ring); outline: none; }
+        .label { display: block; color: var(--text-muted); font-size: 12px; }
+        
+        .select {
+            appearance: none;
+            line-height: 34px;
+            padding-right: 28px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23dedede' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px 16px;
+        }
+        .check {
+            appearance: none;
+            display: grid;
+            place-content: center;
+            margin: 0;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #595959;
+            border-radius: 4px;
+            background: var(--editor-bg);
+            transition: box-shadow .12s, border-color .12s, background .12s;
+        }
+        .check:hover { background: var(--muted); }
+        .check:focus-visible { 
+            box-shadow: var(--ring);
+            outline: none;
+        }
+        .check:checked { 
+            border-color: var(--ring-color); 
+            background: var(--editor-bg); 
+        }
+        .check:checked::after {
+            content: "";
+            width: 12px;
+            height: 12px;
+            display: block;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 12px 12px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+        }
+
+
+        /* --- Buttons --- */
+        .btn { 
+            appearance: none; user-select: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; font-weight: 500; font-size: 14px; border-radius: var(--radius); border: 1px solid transparent;
+            transition: transform .06s, background-color .12s, color .12s, border-color .12s, box-shadow .12s;
+            padding: 0 12px; height: 32px; line-height: 1; position: relative; 
+        }
+        .btn:active { transform: translateY(1px); }
+        .btn:disabled { opacity: .55; cursor: not-allowed; }
+        .btn--default { background: var(--btn-default-bg); color: var(--btn-default-fg); }
+        .btn--default:hover { background: var(--btn-default-hover); }
+        .btn--secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-fg); }
+        .btn--secondary:hover { background: var(--btn-secondary-hover); }
+        .btn--destructive { background: #ef4444; color: #ffffff; }
+        .btn--destructive:hover { background: #dc2626; }
+        .btn--icon { width: 34px; height: 34px; padding: 0; }
+        /* Loading State */
+        .btn.is-loading { position: relative; pointer-events: none; }
+        .btn__label { display: inline-block; }
+        .btn.is-loading .btn__label { display: none; }
+        .btn__spinner { display: none; width: 16px; height: 16px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.9s linear infinite; }
+        .btn.is-loading .btn__spinner { display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Switch --- */
+        .switch { position: relative; display: inline-flex; align-items: center; width: 24px; height: 14px; vertical-align: middle; flex-shrink: 0; }
+        .switch-input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+        .switch-track { position: relative; width: 100%; height: 100%; border-radius: 9999px; cursor: pointer; background-color: #454545; transition: background-color 160ms ease; }
+        .switch-knob { position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 9999px; background-color: #ffffff; transition: transform 160ms cubic-bezier(.22, 1, .36, 1); }
+        .switch-input:checked + .switch-track { background-color: #8e8e8e; }
+        .switch-input:checked + .switch-track + .switch-knob { transform: translateX(10px); }
+
+        /* --- Input Group with Color Swatch --- */
+        .input-group { position: relative; display: flex; align-items: center; background: var(--editor-bg); border-radius: var(--radius); transition: box-shadow .12s; }
+        .input-group:focus-within { box-shadow: var(--ring); }
+        .input-group .input { background: transparent; box-shadow: none; height: 32px; }
+        .color-swatch { width: 18px; height: 18px; border-radius: 3px; border: 1px solid var(--border); cursor: pointer; margin-left: 8px; flex-shrink: 0; }
+        
+        /* --- Dropdowns --- */
+        .dropdown { position: relative; }
+        .dropdown-panel { 
+            position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; 
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); 
+            padding: 6px; box-shadow: var(--shadow-md); opacity: 0; transform: translateY(-4px); 
+            pointer-events: none; transition: opacity .15s, transform .15s; 
+            box-sizing: border-box; width: 100%;
+        }
+        .dropdown-panel.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: var(--radius); cursor: pointer; font-size: 14px; color: var(--text); background-color: transparent; border: none; width: 100%; text-align: left; }
+        .dropdown-item:hover { background: var(--muted); }
+
+        /* --- Color Palette --- */
+        .color-palette-panel { 
+            padding: 12px; display: flex; flex-direction: column; 
+            gap: 12px; width: max-content; max-width: 300px; max-height: 250px; overflow-y: auto;
+        }
+        .color-palette__family + .color-palette__family { margin-top: 0; }
+        .color-palette__title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px 4px; }
+        .color-palette__swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+        .color-palette__swatch { width: 20px; height: 20px; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; padding: 0; background-color: transparent; }
+        
+        /* --- Notifications --- */
+        .info-notification { background-color: var(--editor-bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 16px; line-height: 1.6; color: var(--text-muted); }
+        .info-notification p { margin: 0; font-size: 12px; }
+        .info-notification strong { color: var(--text); font-weight: 600; display: block; margin-bottom: 2px; font-size: 14px; }
+        
+        /* --- Preview Card --- */
+        .preview-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+        .preview-board { position: relative; border-radius: var(--radius); background-color: #F5F5F5; min-height: 120px; display: flex; align-items: center; justify-content: center; padding: 24px; overflow: hidden; }
+        .tag-demo { display: inline-flex; align-items: center; justify-content: center; padding: 8px; border-radius: 6px; border: 1px solid transparent; line-height: 1; white-space: nowrap; position: relative; z-index: 1; color: #404040; background-color: #E5E5E5; border-color: #A3A3A3; }
+        
+        /* --- Pills --- */
+        .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pill { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            padding: 0 12px; 
+            border-radius: var(--radius); 
+            border: none; 
+            background: var(--editor-bg); 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            font-size: 12px; 
+            cursor: pointer; 
+            height: 28px;
+        }
+        .pill:active { transform: translateY(1px); }
+        .pill.active { 
+            color: var(--bg); 
+            background: var(--text);
+        }
+
+        /* --- Accordion --- */
+        .accordion { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .acc-item + .acc-item { border-top: 0.5px solid var(--border); }
+        .acc-header-btn { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; background: var(--editor-bg); cursor: pointer; }
+        .acc-header-btn:hover { background: var(--muted); }
+        .acc-title { flex: 1; text-align: left; color: var(--accent); font-weight: 500; font-size: 14px; }
+        .acc-count { color: var(--text-muted); font-size: 12px; }
+        .acc-chevron { transition: transform .16s ease; color: var(--text-muted); }
+        .acc-chevron.open { transform: rotate(180deg); }
+        .acc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .18s ease; background: var(--editor-bg); }
+        .acc-panel.open { grid-template-rows: 1fr; }
+        .acc-panel-inner { overflow: hidden; }
+        .subrow { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 28px; border-top: 0.5px solid rgba(251, 251, 251, .04); }
+        .subrow:hover { background: rgba(251, 251, 251, .02); }
+        .sub-label { flex: 1; color: var(--text); font-size: 14px; }
+        .sub-meta { color: var(--text-muted); font-size: 12px; }
+
+        /* --- Table --- */
+        .table-wrap { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .table { width: 100%; background: #2E2E2E; border-collapse: collapse; }
+        .thead .tr, .tbody .tr { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; }
+        .th, .td { padding: 10px 12px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; text-align: left;}
+        .th { background: #383838; color: var(--accent); font-weight: 600; font-size: 12px; }
+        .tbody .tr:last-child .td { border-bottom: none; }
+        .tbody .tr:nth-child(odd) { background: rgba(251, 251, 251, .02); }
+        .code { color: #85e0a3; font-family: var(--font-mono); font-size: 12px; }
+
+        /* --- Toast Notification --- */
+        .toast { padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--accent); box-shadow: var(--shadow-md); }
+
+        /* --- Empty State --- */
+        .empty-state {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--surface);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* --- Input Composer --- */
+        .input-composer { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: flex-end; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="kit-header">
+        <h1 class="kit-title">Component UI Kit</h1>
+        <p class="kit-description">A collection of UI components extracted from your HTML file.</p>
+    </header>
+
+    <!-- Buttons Section -->
+    <section class="component-section">
+        <h2 class="component-title">Buttons</h2>
+        <div class="component-grid">
+            <div class="component-preview">
+                <h3 class="component-preview-title">Primary Button</h3>
+                <button class="btn btn--default"><span class="btn__label">Primary Button</span></button>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Secondary Button</h3>
+                <button class="btn btn--secondary"><span class="btn__label">Secondary Button</span></button>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Loading Button</h3>
+                <button class="btn btn--default is-loading">
+                    <span class="btn__label">Reorganize</span>
+                    <span class="btn__spinner"></span>
+                </button>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Disabled Button</h3>
+                <button class="btn btn--default" disabled><span class="btn__label">Disabled</span></button>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Destructive Button</h3>
+                <button class="btn btn--destructive"><span class="btn__label">Delete</span></button>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Icon Button</h3>
+                <div class="component-grid" style="grid-template-columns: auto auto; gap: 12px;">
+                    <button class="btn btn--secondary btn--icon" type="button" aria-label="Add replacement">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                    </button>
+                    <button class="btn btn--destructive btn--icon" type="button" aria-label="Remove">
+                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inputs Section -->
+    <section class="component-section">
+        <h2 class="component-title">Inputs</h2>
+        <div class="component-grid">
+            <div class="component-preview">
+                <div class="form-group">
+                    <label class="label" for="text-input">Text Input</label>
+                    <input id="text-input" class="input" placeholder="Type something...">
+                </div>
+            </div>
+            <div class="component-preview">
+                <div class="form-group">
+                    <label class="label" for="number-input">Number Input</label>
+                    <input id="number-input" type="number" class="input" value="48" min="0">
+                </div>
+            </div>
+            <div class="component-preview">
+                 <div class="form-group">
+                    <label class="label">Color Input</label>
+                    <div class="input-group dropdown">
+                        <span class="color-swatch" style="background-color: #E5E5E5;"></span>
+                        <input class="input" value="E5E5E5" placeholder="RRGGBB">
+                        <div class="dropdown-panel color-palette-panel"></div>
+                    </div>
+                </div>
+            </div>
+             <div class="component-preview">
+                <div class="form-group">
+                    <label class="label" for="readonly-input">Read-Only Input</label>
+                    <input id="readonly-input" class="input" placeholder="Select a component" readonly>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Controls Section -->
+    <section class="component-section">
+        <h2 class="component-title">Controls</h2>
+        <div class="component-grid">
+            <div class="component-preview">
+                 <h3 class="component-preview-title">Switch</h3>
+                 <div style="display: flex; gap: 16px; align-items: center;">
+                    <label class="switch">
+                        <input type="checkbox" class="switch-input">
+                        <span class="switch-track"></span><span class="switch-knob"></span>
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" class="switch-input" checked>
+                        <span class="switch-track"></span><span class="switch-knob"></span>
+                    </label>
+                 </div>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Dropdown</h3>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <input type="text" class="input" placeholder="Select family..." readonly value="Inter">
+                        <div class="dropdown-panel">
+                           <button class="dropdown-item">Arial</button>
+                           <button class="dropdown-item">Inter</button>
+                           <button class="dropdown-item">Roboto</button>
+                           <button class="dropdown-item">Poppins</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="component-preview">
+                <h3 class="component-preview-title">Select Menu</h3>
+                <div class="form-group">
+                    <select class="input select">
+                        <option>kebab-case</option>
+                        <option>camelCase</option>
+                        <option>snake_case</option>
+                    </select>
+                </div>
+            </div>
+             <div class="component-preview">
+                 <h3 class="component-preview-title">Checkbox</h3>
+                 <div style="display: flex; gap: 16px; align-items: center;">
+                    <label style="display: flex; gap: 8px; align-items: center; cursor: pointer;">
+                         <input type="checkbox" class="check"><span class="label" style="margin-top: 1px;">Unchecked</span>
+                    </label>
+                     <label style="display: flex; gap: 8px; align-items: center; cursor: pointer;">
+                         <input type="checkbox" class="check" checked><span class="label" style="margin-top: 1px;">Checked</span>
+                    </label>
+                 </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Other Components Section -->
+    <section class="component-section">
+        <h2 class="component-title">Other Components</h2>
+        <div class="component-grid" style="grid-template-columns: 1fr;">
+             <div class="component-preview">
+                <h3 class="component-preview-title">Notification</h3>
+                <div class="info-notification">
+                    <p><strong>Layout Organization</strong>The first property will be columns, the second will be rows, and the rest will be groups.</p>
+                </div>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Preview Card with Tag</h3>
+                 <div class="preview-card">
+                    <div class="preview-board">
+                        <div class="tag-demo">Group/Row</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complex Components Section -->
+    <section class="component-section">
+        <h2 class="component-title">Complex Components</h2>
+        <div class="component-grid" style="grid-template-columns: 1fr;">
+            <div class="component-preview">
+                <h3 class="component-preview-title">Pills</h3>
+                <div class="pills">
+                    <button class="pill active">Root</button>
+                    <button class="pill active">Domain</button>
+                    <button class="pill">Context</button>
+                    <button class="pill">Element</button>
+                </div>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Input Composer</h3>
+                <div class="input-composer">
+                    <div class="form-group">
+                      <label for="originalWord" class="label">Original Word</label>
+                      <input class="input" id="originalWord" placeholder="Background" />
+                    </div>
+                    <div class="form-group">
+                      <label for="replacementWord" class="label">Replace with</label>
+                      <input class="input" id="replacementWord" placeholder="bg" />
+                    </div>
+                    <button class="btn btn--secondary btn--icon" type="button" aria-label="Add replacement">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Accordion</h3>
+                <div class="accordion">
+                    <div class="acc-item">
+                      <button class="acc-header-btn" type="button" data-action="toggle-accordion">
+                        <div class="acc-title">Collection Name</div>
+                        <div class="acc-count">12 variables</div>
+                        <span class="acc-chevron open">
+                          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+                        </span>
+                      </button>
+                      <div class="acc-panel open">
+                        <div class="acc-panel-inner">
+                            <div class="subrow">
+                              <input type="checkbox" class="check" checked />
+                              <div class="sub-label">Group Name 1</div>
+                              <div class="sub-meta">8 variables</div>
+                            </div>
+                             <div class="subrow">
+                              <input type="checkbox" class="check" />
+                              <div class="sub-label">Group Name 2</div>
+                              <div class="sub-meta">4 variables</div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="acc-item">
+                      <button class="acc-header-btn" type="button" data-action="toggle-accordion">
+                        <div class="acc-title">Another Collection</div>
+                        <div class="acc-count">5 variables</div>
+                         <span class="acc-chevron">
+                          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+                        </span>
+                      </button>
+                       <div class="acc-panel">
+                          <div class="acc-panel-inner"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="component-preview">
+                <h3 class="component-preview-title">Table</h3>
+                <div class="table-wrap">
+                  <div class="table">
+                    <div class="thead">
+                      <div class="tr">
+                        <div class="th">Default variable</div>
+                        <div class="th">Preview</div>
+                      </div>
+                    </div>
+                    <div class="tbody">
+                        <div class="tr"><div class="td">colors/blue/500</div><div class="td code">--colors-blue-500</div></div>
+                        <div class="tr"><div class="td">font/size/lg</div><div class="td code">--font-size-lg</div></div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="component-preview" style="flex-direction: row; align-items: flex-start; gap: 24px;">
+                 <div><h3 class="component-preview-title">Toast</h3> <div class="toast">Changes applied successfully!</div></div>
+                 <div><h3 class="component-preview-title">Empty State</h3><div class="empty-state">No variables available.</div></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Dropdown Logic
+        const dropdowns = document.querySelectorAll('.dropdown');
+
+        dropdowns.forEach(dropdown => {
+            const input = dropdown.querySelector('.input, .color-swatch');
+            const panel = dropdown.querySelector('.dropdown-panel');
+
+            if (input && panel) {
+                input.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    // Close other open dropdowns
+                    document.querySelectorAll('.dropdown-panel.show').forEach(p => {
+                        if (p !== panel) p.classList.remove('show');
+                    });
+                    panel.classList.toggle('show');
+                });
+            }
+        });
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', () => {
+            document.querySelectorAll('.dropdown-panel.show').forEach(panel => {
+                panel.classList.remove('show');
+            });
+        });
+
+        // Color Palette Logic
+        const tailwindColors = {
+            "Slate": { "50": "#f8fafc", "100": "#f1f5f9", "200": "#e2e8f0", "300": "#cbd5e1", "400": "#94a3b8", "500": "#64748b", "600": "#475569", "700": "#334155", "800": "#1e293b", "900": "#0f172a" },
+            "Gray": { "50": "#f9fafb", "100": "#f3f4f6", "200": "#e5e7eb", "300": "#d1d5db", "400": "#9ca3af", "500": "#6b7280", "600": "#4b5563", "700": "#374151", "800": "#1f2937", "900": "#111827" },
+            "Zinc": { "50": "#fafafa", "100": "#f4f4f5", "200": "#e4e4e7", "300": "#d4d4d8", "400": "#a1a1aa", "500": "#71717a", "600": "#52525b", "700": "#3f3f46", "800": "#27272a", "900": "#18181b" },
+            "Neutral": { "50": "#fafafa", "100": "#f5f5f5", "200": "#e5e5e5", "300": "#d4d4d4", "400": "#a3a3a3", "500": "#737373", "600": "#525252", "700": "#404040", "800": "#262626", "900": "#171717" },
+            "Stone": { "50": "#fafaf9", "100": "#f5f5f4", "200": "#e7e5e4", "300": "#d6d3d1", "400": "#a8a29e", "500": "#78716c", "600": "#57534e", "700": "#44403c", "800": "#292524", "900": "#1c1917" },
+            "Red": { "50": "#fef2f2", "100": "#fee2e2", "200": "#fecaca", "300": "#fca5a5", "400": "#f87171", "500": "#ef4444", "600": "#dc2626", "700": "#b91c1c", "800": "#991b1b", "900": "#7f1d1d" },
+            "Orange": { "50": "#fff7ed", "100": "#ffedd5", "200": "#fed7aa", "300": "#fdba74", "400": "#fb923c", "500": "#f97316", "600": "#ea580c", "700": "#c2410c", "800": "#9a3412", "900": "#7c2d12" },
+            "Amber": { "50": "#fffbeb", "100": "#fef3c7", "200": "#fde68a", "300": "#fcd34d", "400": "#fbbf24", "500": "#f59e0b", "600": "#d97706", "700": "#b45309", "800": "#92400e", "900": "#78350f" },
+            "Yellow": { "50": "#fefce8", "100": "#fef9c3", "200": "#fef08a", "300": "#fde047", "400": "#facc15", "500": "#eab308", "600": "#ca8a04", "700": "#a16207", "800": "#854d0e", "900": "#713f12" },
+            "Lime": { "50": "#f7fee7", "100": "#ecfccb", "200": "#d9f99d", "300": "#bef264", "400": "#a3e635", "500": "#84cc16", "600": "#65a30d", "700": "#4d7c0f", "800": "#3f6212", "900": "#365314" },
+            "Green": { "50": "#f0fdf4", "100": "#dcfce7", "200": "#bbf7d0", "300": "#86efac", "400": "#4ade80", "500": "#22c55e", "600": "#16a34a", "700": "#15803d", "800": "#166534", "900": "#14532d" },
+            "Emerald": { "50": "#ecfdf5", "100": "#d1fae5", "200": "#a7f3d0", "300": "#6ee7b7", "400": "#34d399", "500": "#10b981", "600": "#059669", "700": "#047857", "800": "#065f46", "900": "#064e3b" },
+            "Teal": { "50": "#f0fdfa", "100": "#ccfbf1", "200": "#99f6e4", "300": "#5eead4", "400": "#2dd4bf", "500": "#14b8a6", "600": "#0d9488", "700": "#0f766e", "800": "#115e59", "900": "#134e4a" },
+            "Cyan": { "50": "#ecfeff", "100": "#cffafe", "200": "#a5f3fd", "300": "#67e8f9", "400": "#22d3ee", "500": "#06b6d4", "600": "#0891b2", "700": "#0e7490", "800": "#155e75", "900": "#164e63" },
+            "Sky": { "50": "#f0f9ff", "100": "#e0f2fe", "200": "#bae6fd", "300": "#7dd3fc", "400": "#38bdf8", "500": "#0ea5e9", "600": "#0284c7", "700": "#0369a1", "800": "#075985", "900": "#0c4a6e" },
+            "Blue": { "50": "#eff6ff", "100": "#dbeafe", "200": "#bfdbfe", "300": "#93c5fd", "400": "#60a5fa", "500": "#3b82f6", "600": "#2563eb", "700": "#1d4ed8", "800": "#1e40af", "900": "#1e3a8a" },
+            "Indigo": { "50": "#eef2ff", "100": "#e0e7ff", "200": "#c7d2fe", "300": "#a5b4fc", "400": "#818cf8", "500": "#6366f1", "600": "#4f46e5", "700": "#4338ca", "800": "#3730a3", "900": "#312e81" },
+            "Violet": { "50": "#f5f3ff", "100": "#ede9fe", "200": "#ddd6fe", "300": "#c4b5fd", "400": "#a78bfa", "500": "#8b5cf6", "600": "#7c3aed", "700": "#6d28d9", "800": "#5b21b6", "900": "#4c1d95" },
+            "Purple": { "50": "#faf5ff", "100": "#f3e8ff", "200": "#e9d5ff", "300": "#d8b4fe", "400": "#c084fc", "500": "#a855f7", "600": "#9333ea", "700": "#7e22ce", "800": "#6b21a8", "900": "#581c87" },
+            "Fuchsia": { "50": "#fdf4ff", "100": "#fae8ff", "200": "#f5d0fe", "300": "#f0abfc", "400": "#e879f9", "500": "#d946ef", "600": "#c026d3", "700": "#a21caf", "800": "#86198f", "900": "#701a75" },
+            "Pink": { "50": "#fdf2f8", "100": "#fce7f3", "200": "#fbcfe8", "300": "#f9a8d4", "400": "#f472b6", "500": "#ec4899", "600": "#db2777", "700": "#be185d", "800": "#9d174d", "900": "#831843" },
+            "Rose": { "50": "#fff1f2", "100": "#ffe4e6", "200": "#fecdd3", "300": "#fda4af", "400": "#fb7185", "500": "#f43f5e", "600": "#e11d48", "700": "#be123c", "800": "#9f1239", "900": "#881337" }
+        };
+        
+        const colorPalettePanel = document.querySelector('.color-palette-panel');
+        if (colorPalettePanel) {
+            let paletteHTML = '';
+            for (const familyName in tailwindColors) {
+                paletteHTML += `<div class="color-palette__family"><div class="color-palette__title">${familyName}</div><div class="color-palette__swatches">`;
+                for (const weight in tailwindColors[familyName]) {
+                    const hex = tailwindColors[familyName][weight];
+                    paletteHTML += `<button class="color-palette__swatch" style="background-color:${hex}" data-hex="${hex.substring(1).toUpperCase()}"></button>`;
+                }
+                paletteHTML += `</div></div>`;
+            }
+            colorPalettePanel.innerHTML = paletteHTML;
+
+            colorPalettePanel.addEventListener('click', (e) => {
+                const target = e.target.closest('.color-palette__swatch');
+                if (target) {
+                    const hexValue = target.dataset.hex;
+                    const inputGroup = colorPalettePanel.closest('.input-group');
+                    const hexInput = inputGroup.querySelector('input');
+                    const swatch = inputGroup.querySelector('.color-swatch');
+
+                    hexInput.value = hexValue;
+                    swatch.style.backgroundColor = '#' + hexValue;
+                    colorPalettePanel.classList.remove('show');
+                }
+            });
+        }
+
+        // Accordion Logic
+        document.querySelectorAll('[data-action="toggle-accordion"]').forEach(button => {
+            button.addEventListener('click', () => {
+                const panel = button.nextElementSibling;
+                const chevron = button.querySelector('.acc-chevron');
+                if (panel && chevron) {
+                    if (panel.classList.contains('open')) {
+                        panel.classList.remove('open');
+                        chevron.classList.remove('open');
+                    } else {
+                        panel.classList.add('open');
+                        chevron.classList.add('open');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
+

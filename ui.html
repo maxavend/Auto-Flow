@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Flow Connector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --font-sans: 'Inter', -apple-system, system-ui, "SF Pro Text", Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --radius-lg: 8px;
+      --radius: 4px;
+      --shadow-md: 0 4px 12px rgb(0 0 0 / 0.1);
+      --bg: #262626;
+      --surface: #2c2c2c;
+      --border: #444444;
+      --muted: #454545;
+      --text: #fbfbfb;
+      --text-muted: #dedede;
+      --accent: #f7f7f7;
+      --ring: 0 0 0 1px #b5b5b5;
+      --btn-default-bg: #fbfbfb;
+      --btn-default-fg: #252525;
+      --btn-default-hover: #f7f7f7;
+      --btn-secondary-bg: #5f5f5f;
+      --btn-secondary-fg: #fbfbfb;
+      --btn-secondary-hover: #707070;
+      --editor-bg: #383838;
+      --error: #f87171;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .layout {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+    .title { margin: 0; font-size: 24px; color: var(--accent); font-weight: 700; }
+    .description { margin: 0; color: var(--text-muted); }
+
+    .section-stack { display: flex; flex-direction: column; gap: 12px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card-body { display: flex; flex-direction: column; gap: 12px; }
+    .card-header { display: flex; flex-direction: column; gap: 4px; }
+    .card-title { margin: 0; color: var(--accent); font-size: 16px; font-weight: 600; }
+    .card-subtitle { margin: 0; color: var(--text-muted); font-size: 13px; }
+
+    .form-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+    .input, .select, .select-btn {
+      width: 100%;
+      height: 34px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--editor-bg);
+      color: var(--text);
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+      transition: box-shadow 0.12s ease;
+    }
+    .select {
+      appearance: none;
+      padding-right: 32px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23dedede' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 16px;
+    }
+    .input:focus-visible, .select:focus-visible, .select-btn:focus-visible, .btn:focus-visible, .input-group:focus-within { box-shadow: var(--ring); outline: none; }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: var(--radius);
+      background: var(--editor-bg);
+      padding: 0 10px 0 8px;
+      min-height: 34px;
+    }
+    .input-group .input { background: transparent; padding: 0; border-radius: 0; height: 100%; }
+    .color-swatch { width: 18px; height: 18px; border-radius: 3px; border: 1px solid var(--border); pointer-events: none; background: #ffffff; }
+
+    .btn {
+      appearance: none;
+      user-select: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      transition: transform 0.06s ease, background-color 0.12s ease, color 0.12s ease;
+      padding: 0 14px;
+      height: 36px;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn--default { background: var(--btn-default-bg); color: var(--btn-default-fg); }
+    .btn--default:hover { background: var(--btn-default-hover); }
+    .btn--secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-fg); }
+    .btn--secondary:hover { background: var(--btn-secondary-hover); }
+
+    .error-banner {
+      display: none;
+      border-radius: var(--radius);
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.4);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .connector-board {
+      position: relative;
+      background: var(--editor-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      min-height: 120px;
+    }
+    #preview-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    #preview-line { stroke: var(--text-muted); stroke-width: 2; stroke-dasharray: 4 2; }
+    .preview-node {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--text-muted);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .connection-point {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid var(--text-muted);
+      background: var(--bg);
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+    .connection-point:hover { background: var(--muted); }
+    .connection-point.selected { background: var(--btn-default-bg); border-color: var(--btn-default-bg); }
+    .connection-point[data-pos="top"] { top: -6px; left: 50%; transform: translateX(-50%); }
+    .connection-point[data-pos="right"] { right: -6px; top: 50%; transform: translateY(-50%); }
+    .connection-point[data-pos="bottom"] { bottom: -6px; left: 50%; transform: translateX(-50%); }
+    .connection-point[data-pos="left"] { left: -6px; top: 50%; transform: translateY(-50%); }
+
+    .mono { font-family: var(--font-mono); letter-spacing: 0.02em; font-size: 12px; text-transform: uppercase; }
+    .preview-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); }
+
+    .card-footer { display: flex; justify-content: flex-end; gap: 8px; }
+    .muted-note { font-size: 12px; color: var(--text-muted); }
+
+    .blurred { opacity: 0.4; filter: blur(1px); pointer-events: none; user-select: none; transition: opacity .2s, filter .2s; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header class="header">
+      <span class="eyebrow">Auto Flow</span>
+      <h1 class="title">Connector Builder</h1>
+      <p class="description">Conecta dos nodos, elige imanes y pega el conector nativo de FigJam.</p>
+    </header>
+
+    <section class="card" aria-labelledby="selection-title">
+      <div class="card-header">
+        <h2 class="card-title" id="selection-title">Selección</h2>
+        <p class="card-subtitle">Selecciona exactamente dos capas para habilitar el flujo.</p>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="label" for="selected-start">Start node</label>
+          <input id="selected-start" class="input" value="ƒ?"" readonly />
+        </div>
+        <div class="form-group">
+          <label class="label" for="selected-end">End node</label>
+          <input id="selected-end" class="input" value="ƒ?"" readonly />
+        </div>
+      </div>
+      <div class="error-banner" role="alert" id="error-message">Select exactly two nodes to continue.</div>
+    </section>
+
+    <section class="section-stack">
+      <div class="card" aria-labelledby="magnet-title">
+        <div class="card-header" style="gap: 4px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div>
+              <span class="eyebrow">Magnets</span>
+              <h2 class="card-title" id="magnet-title" style="margin: 2px 0 0;">Anclajes del conector</h2>
+              <p class="card-subtitle">Elige el lado de cada nodo donde se pega el conector.</p>
+            </div>
+            <button id="copy" class="btn btn--secondary" style="height: 32px; font-size: 13px; padding: 0 12px;">Copy Connector</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="connector-board" id="preview-board">
+            <svg id="preview-svg" aria-hidden="true">
+              <line id="preview-line" x1="0" y1="0" x2="0" y2="0"></line>
+            </svg>
+            <div class="preview-node" id="start-node">
+              <div class="connection-point" role="button" tabindex="0" aria-pressed="false" data-node="start" data-pos="top"></div>
+              <div class="connection-point selected" role="button" tabindex="0" aria-pressed="true" data-node="start" data-pos="right"></div>
+              <div class="connection-point" role="button" tabindex="0" aria-pressed="false" data-node="start" data-pos="bottom"></div>
+              <div class="connection-point" role="button" tabindex="0" aria-pressed="false" data-node="start" data-pos="left"></div>
+            </div>
+            <div class="preview-node" id="end-node">
+              <div class="connection-point" role="button" tabindex="0" aria-pressed="false" data-node="end" data-pos="top"></div>
+              <div class="connection-point" role="button" tabindex="0" aria-pressed="false" data-node="end" data-pos="right"></div>
+              <div class="connection-point" role="button" tabindex="0" aria-pressed="false" data-node="end" data-pos="bottom"></div>
+              <div class="connection-point selected" role="button" tabindex="0" aria-pressed="true" data-node="end" data-pos="left"></div>
+            </div>
+          </div>
+          <div class="preview-footer">
+            <span class="mono" id="start-magnet-label">Start magnet ¶ú RIGHT</span>
+            <span class="mono" id="end-magnet-label">End magnet ¶ú LEFT</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" aria-labelledby="customize-title">
+        <div class="card-header">
+          <span class="eyebrow">Customize</span>
+          <h2 class="card-title" id="customize-title" style="margin: 2px 0 0;">Ajustes del conector</h2>
+          <p class="card-subtitle">Define estilo, color y caps para el conector pegado.</p>
+        </div>
+        <div class="card-body" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="label" for="line-type">Line style</label>
+              <select id="line-type" class="select">
+                <option value="ELBOWED">Elbowed</option>
+                <option value="STRAIGHT">Straight</option>
+                <option value="CURVED">Curved</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="label" for="stroke-weight">Stroke weight</label>
+              <input id="stroke-weight" type="number" class="input" value="2" min="1" />
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="label" for="stroke-color">Stroke color</label>
+              <div class="input-group">
+                <span class="color-swatch" id="color-swatch"></span>
+                <input id="stroke-color" class="input mono" value="#FFFFFF" placeholder="#FFFFFF" maxlength="7" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="label" for="end-cap">End cap</label>
+              <select id="end-cap" class="select">
+                <option value="NONE">None</option>
+                <option value="ARROW">Arrow</option>
+                <option value="ARROW_FILLED" selected>Arrow ƒ?" Filled</option>
+                <option value="CIRCLE_FILLED">Circle ƒ?" Filled</option>
+                <option value="DIAMOND_FILLED">Diamond ƒ?" Filled</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="label" for="start-cap">Start cap</label>
+            <select id="start-cap" class="select">
+              <option value="NONE" selected>None</option>
+              <option value="ARROW">Arrow</option>
+              <option value="ARROW_FILLED">Arrow ƒ?" Filled</option>
+              <option value="CIRCLE_FILLED">Circle ƒ?" Filled</option>
+              <option value="DIAMOND_FILLED">Diamond ƒ?" Filled</option>
+            </select>
+          </div>
+          <p class="muted-note">Pega con Ctrl/Cmd+V cuando haya plantilla copiada y dos nodos seleccionados.</p>
+          <div class="card-footer">
+            <button id="paste" class="btn btn--secondary" style="display:none;">Paste Connector</button>
+            <button id="apply" class="btn btn--default">Create connector</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      startNodeId: null,
+      endNodeId: null,
+      startMagnet: 'RIGHT',
+      endMagnet: 'LEFT',
+      connectorId: null,
+      hasTemplate: false,
+      isLiveMode: false
+    };
+
+    const MSG = {
+      APPLY: 'APPLY_CONNECTOR',
+      COPY: 'COPY_TEMPLATE',
+      UPDATE: 'UPDATE_CONNECTOR',
+      SELECTION: 'SELECTION_INFO',
+      UI_READY: 'UI_READY'
+    };
+
+    const startPoints = document.querySelectorAll('.connection-point[data-node="start"]');
+    const endPoints = document.querySelectorAll('.connection-point[data-node="end"]');
+    const previewLine = document.getElementById('preview-line');
+    const previewBoard = document.getElementById('preview-board');
+    const errorBanner = document.getElementById('error-message');
+    const startLabel = document.getElementById('start-magnet-label');
+    const endLabel = document.getElementById('end-magnet-label');
+    const colorInput = document.getElementById('stroke-color');
+    const weightInput = document.getElementById('stroke-weight');
+    const colorSwatch = document.getElementById('color-swatch');
+    const lineTypeSelect = document.getElementById('line-type');
+    const startCapSelect = document.getElementById('start-cap');
+    const endCapSelect = document.getElementById('end-cap');
+
+    const btnCopy = document.getElementById('copy');
+    const btnPaste = document.getElementById('paste');
+    const btnApply = document.getElementById('apply');
+
+    const startPointsNamed = {};
+    const endPointsNamed = {};
+    const previewStart = { x: 52, y: 100 };
+    const previewEnd = { x: 188, y: 44 };
+
+    function normalizeHex(hex) {
+      if (!hex) return '#111827';
+      hex = hex.trim();
+      if (!hex.startsWith('#')) hex = '#' + hex;
+      hex = hex.replace(/[^0-9A-Fa-f#]/g, '').toUpperCase();
+      if (hex.length > 7) hex = hex.slice(0, 7);
+      return hex;
+    }
+
+    function resolveHex(hex) {
+      const normalized = normalizeHex(hex);
+      if (/^#[0-9A-F]{3}$/.test(normalized)) {
+        return '#' + normalized.slice(1).split('').map((ch) => ch + ch).join('');
+      }
+      if (/^#[0-9A-F]{6}$/.test(normalized)) {
+        return normalized;
+      }
+      return '#111827';
+    }
+
+    function updatePreviewLine() {
+      const startPoint = startPointsNamed[state.startMagnet]?.center || null;
+      const endPoint = endPointsNamed[state.endMagnet]?.center || null;
+
+      if (startPoint && endPoint) {
+        previewLine.setAttribute('x1', startPoint.x);
+        previewLine.setAttribute('y1', startPoint.y);
+        previewLine.setAttribute('x2', endPoint.x);
+        previewLine.setAttribute('y2', endPoint.y);
+      } else {
+        previewLine.setAttribute('x1', 0);
+        previewLine.setAttribute('y1', 0);
+        previewLine.setAttribute('x2', 0);
+        previewLine.setAttribute('y2', 0);
+      }
+
+      const stroke = resolveHex(colorInput.value);
+      previewLine.style.stroke = stroke;
+      previewLine.style.strokeWidth = Math.max(1, Number(weightInput.value) || 1) + 'px';
+    }
+
+    function getPointCenter(point) {
+      const boardRect = previewBoard.getBoundingClientRect();
+      const pointRect = point.getBoundingClientRect();
+      return {
+        x: pointRect.left - boardRect.left + pointRect.width / 2,
+        y: pointRect.top - boardRect.top + pointRect.height / 2
+      };
+    }
+
+    function updateStylePreview() {
+      // Preview card removida; dejamos no-op para mantener las llamadas.
+      return;
+    }
+
+    function setSelection(group, magnet, node) {
+      group.forEach((point) => {
+        const isActive = point.dataset.pos.toUpperCase() === magnet;
+        point.classList.toggle('selected', isActive);
+        point.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+
+      if (node === 'start') {
+        startLabel.textContent = `Start magnet ¶ú ${magnet}`;
+      } else {
+        endLabel.textContent = `End magnet ¶ú ${magnet}`;
+      }
+
+      updateCenters();
+      updatePreviewLine();
+    }
+
+    function updateCenters() {
+      startPoints.forEach((point) => {
+        const key = point.dataset.pos.toUpperCase();
+        startPointsNamed[key] = { element: point, center: getPointCenter(point) };
+      });
+      endPoints.forEach((point) => {
+        const key = point.dataset.pos.toUpperCase();
+        endPointsNamed[key] = { element: point, center: getPointCenter(point) };
+      });
+    }
+
+    startPoints.forEach((point) => {
+      point.addEventListener('click', () => {
+        state.startMagnet = point.dataset.pos.toUpperCase();
+        setSelection(startPoints, state.startMagnet, 'start');
+        updateStylePreview();
+        if (state.isLiveMode) {
+          parent.postMessage({
+            pluginMessage: {
+              type: MSG.UPDATE,
+              data: { startMagnet: state.startMagnet, endMagnet: state.endMagnet }
+            }
+          }, '*');
+        }
+      });
+    });
+
+    endPoints.forEach((point) => {
+      point.addEventListener('click', () => {
+        state.endMagnet = point.dataset.pos.toUpperCase();
+        setSelection(endPoints, state.endMagnet, 'end');
+        updateStylePreview();
+        if (state.isLiveMode) {
+          parent.postMessage({
+            pluginMessage: {
+              type: MSG.UPDATE,
+              data: { startMagnet: state.startMagnet, endMagnet: state.endMagnet }
+            }
+          }, '*');
+        }
+      });
+    });
+
+    colorInput.addEventListener('input', () => {
+      const normalized = normalizeHex(colorInput.value);
+      colorInput.value = normalized;
+      colorSwatch.style.background = resolveHex(normalized);
+      updatePreviewLine();
+      updateStylePreview();
+    });
+
+    colorInput.addEventListener('blur', () => {
+      const resolved = resolveHex(colorInput.value);
+      colorInput.value = resolved;
+      colorSwatch.style.background = resolved;
+      updatePreviewLine();
+      updateStylePreview();
+    });
+
+    weightInput.addEventListener('input', () => {
+      updatePreviewLine();
+      updateStylePreview();
+    });
+
+    lineTypeSelect.addEventListener('change', updateStylePreview);
+    startCapSelect.addEventListener('change', updateStylePreview);
+    endCapSelect.addEventListener('change', updateStylePreview);
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateCenters();
+      updatePreviewLine();
+    });
+    resizeObserver.observe(previewBoard);
+
+    window.addEventListener('resize', () => {
+      updateCenters();
+      updatePreviewLine();
+    });
+
+    setTimeout(() => {
+      updateCenters();
+      colorSwatch.style.background = resolveHex(colorInput.value);
+      updatePreviewLine();
+      updateStylePreview();
+    }, 0);
+
+    btnCopy.addEventListener('click', () => {
+      if (state.connectorId) {
+        parent.postMessage({ pluginMessage: { type: MSG.COPY, data: { connectorId: state.connectorId } } }, '*');
+      }
+    });
+
+    btnPaste.addEventListener('click', () => {
+      applyConnector();
+    });
+
+    btnApply.addEventListener('click', () => {
+      applyConnector();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
+        if (state.hasTemplate && state.startNodeId && state.endNodeId) {
+          applyConnector();
+        }
+      }
+    });
+
+    function applyConnector() {
+      if (!state.startNodeId || !state.endNodeId) {
+        errorBanner.style.display = 'block';
+        errorBanner.textContent = 'Select exactly two nodes to continue.';
+        return;
+      }
+
+      const payload = {
+        type: MSG.APPLY,
+        data: {
+          lineType: lineTypeSelect.value,
+          color: resolveHex(colorInput.value),
+          strokeWeight: Math.max(1, Number(weightInput.value) || 1),
+          startCap: startCapSelect.value,
+          endCap: endCapSelect.value,
+          startMagnet: state.startMagnet,
+          endMagnet: state.endMagnet
+        }
+      };
+
+      parent.postMessage({ pluginMessage: payload }, '*');
+    }
+
+    window.onmessage = (event) => {
+      const msg = event.data?.pluginMessage;
+      if (!msg) return;
+
+      if (msg.type === MSG.SELECTION) {
+        const { a, b, hasConnector, connectorId, hasTemplate } = msg.data;
+
+        state.startNodeId = a?.id || null;
+        state.endNodeId = b?.id || null;
+        state.connectorId = connectorId || null;
+        state.hasTemplate = hasTemplate || false;
+
+        state.isLiveMode = (!!a && !!b && hasConnector);
+
+        document.getElementById('selected-start').value = a?.name || 'ƒ?"';
+        document.getElementById('selected-end').value = b?.name || 'ƒ?"';
+
+        if (a && b) {
+          errorBanner.style.display = 'none';
+
+          if (state.hasTemplate) {
+            btnPaste.style.display = 'inline-flex';
+            btnApply.style.display = 'none';
+          } else {
+            btnPaste.style.display = 'none';
+            btnApply.style.display = 'inline-flex';
+          }
+          btnCopy.style.display = 'none';
+        } else {
+          btnPaste.style.display = 'none';
+          btnApply.style.display = 'inline-flex';
+
+          if (hasConnector && !a && !b) {
+            btnCopy.style.display = 'inline-flex';
+          } else {
+            btnCopy.style.display = 'none';
+          }
+        }
+
+        const magnetBody = document.getElementById('preview-board')?.parentElement;
+        if (magnetBody) {
+          if (state.isLiveMode) {
+            magnetBody.classList.remove('blurred');
+          } else {
+            magnetBody.classList.add('blurred');
+          }
+        }
+      }
+    };
+
+    parent.postMessage({ pluginMessage: { type: MSG.UI_READY } }, '*');
+  </script>
+</body>
+</html>
