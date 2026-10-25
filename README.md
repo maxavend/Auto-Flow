@@ -1,40 +1,47 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# Auto Flow
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+A Figma and FigJam plugin experiment for connecting two selected nodes with native connector objects.
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+> **Project status:** Early iteration. This repository documents the original Auto Flow prototype; it is not the polished, current version of the tool.
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+## What it explores
 
-  https://nodejs.org/en/download/
+Connecting shapes in a diagram is easy to start and tedious to refine. Auto Flow explores a compact interface for controlling the relationship between two selected elements:
 
-Next, install TypeScript using the command:
+- Connector geometry: elbowed, straight, or curved.
+- Start and end anchors (top, bottom, left, right, or automatic).
+- Line color, thickness, and endpoint caps.
+- Reusing a selected connector or a connector already present in the document.
 
-  npm install -g typescript
+The implementation deliberately favors **native Figma/FigJam connectors** instead of drawing independent decorative vector lines.
 
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
+## How it works
 
-  npm install --save-dev @figma/plugin-typings
+1. Select two elements in a Figma or FigJam document.
+2. Open Auto Flow and configure the connector.
+3. Apply the connection. When a native connector is available, the plugin can relink or duplicate it between the selected elements.
 
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
+**Important limitation:** FigJam exposes native connector creation. In Figma Design, this version depends on an existing connector or connector template; it does **not** provide a general-purpose vector fallback or guarantee native connector creation from an empty file.
 
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+## Explore the implementation
 
-For more information, visit https://www.typescriptlang.org/
+- [Plugin controller](code.ts) — selection, connector relinking, properties, and editor-specific behavior.
+- [Plugin interface](ui.html) — controls and selection feedback.
+- [Figma manifest](manifest.json) — plugin entry points and editor support.
 
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
+## Run locally
 
-We recommend writing TypeScript code using Visual Studio code:
+Requirements: Node.js/npm and Figma Desktop.
 
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
+```bash
+npm install
+npm run build
+```
 
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+In Figma: **Plugins → Development → Import plugin from manifest…** and select `manifest.json`. For active development, use `npm run watch`.
+
+## Context
+
+This is one of my explorations at the intersection of interaction design, Figma automation, and UI engineering. More finished design-and-development work is available at [maxavend.com](https://www.maxavend.com/).
+
+© Maximiliano Avendaño.
